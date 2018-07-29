@@ -4,6 +4,10 @@ source ./functions.sh
 buildDialog() {
   devices=$(whiptail --title "Device build dialog" --inputbox "Enter a list of device codenames. Separate each device codename by a space." 10 40 3>&1 1>&2 2>&3)
   build $devices
+  for i in "${#outdirs[@]}";
+  do
+    echo "Device ${devices[i]} built at ${outdirs[i]}."
+  done
 }
 doneExec() {
   whiptail --title "Confirm dialog" --yesno "Go back to main menu?" 10 25
@@ -38,6 +42,7 @@ mainMenuHandler() {
     # Show a "Go back to main menu" dialog
     doneExec
   elif [[ "$menuResult" = "Build" ]]; then
+    candroid
     buildDialog
     doneExec
   elif [[ "$menuResult" = "Help" ]]; then
@@ -48,7 +53,7 @@ mainMenuHandler() {
 
 mainMenu() {
   choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Help" "Show help.")
-  results=$(whiptail --title "Utilities" --menu "Choose one of the options below:" 25 78 16  "${choices[@]}" 3>&1 1>&2 2>&3)
+  results=$(whiptail --title "Utilities" --menu "Choose one of the options below:" 15 50 0  "${choices[@]}" 3>&1 1>&2 2>&3)
   mainMenuHandler "$results"
 }
 

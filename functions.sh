@@ -137,16 +137,18 @@ candroid() {
 
 # Sources AOSP's build tools
 sourceAOSP() {
-  . build/envsetup.sh
+  echo $(pwd)
+  source build/envsetup.sh
   successBold "Done sourcing!"
 }
 
 # Builds for devices specified in the devices array
 buildDevices() {
+  sourceAOSP
   if [[ ${#devices[@]} -ne 0 ]]; then
     # Check if functions breakfast and brunch from the LineageOS build tools exists
-    if [[ ! $(checkFunction breakfast) ]] && [[ $(checkFunction brunch) ]]; then
-      for i in "${devices[@}";
+    if [[ ! $(checkFunction breakfast) ]] && [[ ! $(checkFunction brunch) ]]; then
+      for i in "${devices[@]}";
         do
           infoBold "Building for $i..."
           breakfast "$i"
@@ -162,12 +164,8 @@ buildDevices() {
 }
 # Builds an array of device codenames, or just one using breakfast and brunch.
 build() {
-  arr=("$@")
-   for i in "${arr[@]}";
-      do
-          devices+=("$i")
-          # buildDevice "$i"
-      done
+  devices=("$@")
+  buildDevices
   # Code adapted from https://stackoverflow.com/a/27254437
   # if [[ "$(declare -p $1)" =~ "declare -a" ]]; then
   #   echo array
