@@ -1,6 +1,17 @@
 #!/bin/bash
+
+# When Ctrl+C is pressed, the whole program will exit
+# See https://stackoverflow.com/a/32146079 for more info
+trap "exit" INT
+
+# Source common functions
 source ./functions.sh
 
+# If a command exits with a non-zero status code, exit this program immediately
+# See `set --help` for more info
+set -e
+
+# Function for showing an input dialog on what device codenames to build
 buildDialog() {
   devices=$(whiptail --title "Device build dialog" --inputbox "Enter a list of device codenames. Separate each device codename by a space." 10 40 3>&1 1>&2 2>&3)
   build $devices
@@ -9,6 +20,8 @@ buildDialog() {
     echo "Device ${devices[i]} built at ${outdirs[i]}."
   done
 }
+
+# Function for showing a confirmation dialog when a command has finished executing
 doneExec() {
   whiptail --title "Confirm dialog" --yesno "Go back to main menu?" 10 25
   if [[ $? -eq 0 ]]; then
@@ -19,6 +32,7 @@ doneExec() {
   fi
 }
 
+# Function for showing a confirmation dialog on whether to exit the program
 confirmExit() {
   whiptail --title "Confirm dialog" --yesno "Are you sure you want to exit?" 10 25
   if [[ $? -eq 0 ]]; then
@@ -29,6 +43,8 @@ confirmExit() {
   fi
 }
 
+# Function for handling menu items
+# @param $1 The menu item that has been entered
 mainMenuHandler() {
   # echo "$1"
   menuResult="$1"
@@ -51,6 +67,7 @@ mainMenuHandler() {
   fi
 }
 
+# Function for showing a menu when the program has been executed
 mainMenu() {
   choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Help" "Show help.")
   results=$(whiptail --title "Utilities" --menu "Choose one of the options below:" 15 50 0  "${choices[@]}" 3>&1 1>&2 2>&3)
@@ -58,25 +75,3 @@ mainMenu() {
 }
 
 mainMenu
-
-# listItems=("Wow" "XD" "Meh")
-# testWow=("hlte" "hltekor")
-# build "${testWow[@]}"
-# devices=$(whiptail --inputbox "Enter a list of device codenames. Separate each device codename by a space." 8 50 --title "Build devices prompt" 3>&1 1>&2 2>&3)
-# A trick to swap stdout and stderr.
-# Again, you can pack this inside if, but it seems really long for some 80-col terminal users.
-# exitstatus=$?
-# if [ $exitstatus = 0 ]; then
-#     echo "User selected Ok and entered" $devices
-# else
-#     echo "User selected Cancel."
-# fi
-
-# echo "(Exit status was $exitstatus)"
-
-# {
-#     for ((i = 0 ; i <= 100 ; i+=1)); do
-#         sleep 1
-#         echo $i
-#     done
-# } | whiptail --gauge "Please wait while installing" 6 60 0
