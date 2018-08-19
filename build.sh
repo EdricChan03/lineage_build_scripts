@@ -9,7 +9,7 @@ source ./functions.sh
 
 # If a command exits with a non-zero status code, exit this program immediately
 # See `set --help` for more info
-set -e
+# set -e
 
 # Function for showing an input dialog on what device codenames to build
 buildDialog() {
