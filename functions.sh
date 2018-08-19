@@ -182,9 +182,7 @@ buildDevices() {
           infoBold "Building for $i..."
           breakfast "$i"
           brunch "$i"
-          # This line gets the latest LineageOS build available in the out directory.
-          result=$(ls -tr $OUT/lineage-*.zip | tail -1)
-          outdirs+=(result)
+          outdirs+=($OUT)
       done
     else
       errorBold "The functions breakfast and/or brunch do not exist. Have you sourced the AOSP and LineageOS build tools?"

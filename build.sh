@@ -10,16 +10,42 @@ source ./functions.sh
 ftpServer=""
 ftpUsername=""
 ftpPassword=""
+# Upload options for FTP
+ftpUploadOptions=()
 # If a command exits with a non-zero status code, exit this program immediately
 # See `set --help` for more info
 # set -e
 
-ftpDialog() {
+# Function for setting the configuration of FTP
+ftpConfigDialog() {
   whiptail --yesno "Would you like to upload the builds via FTP?" 10 25
   if [[ $? -eq 0 ]]; then
-    ftpServer=$(whiptail --inputbox "Enter the FTP server:" 10 40 "uploads.androidfilehost.com" 3>&1 1>&2 2>&3)
-    ftpUsername=$(whiptail --inputbox "Enter your username for the FTP server:" 10 40 3>&1 1>&2 2>&3)
-    ftpPassword=$(whiptail --passwordbox "Enter your password for the FTP server:" 10 40 3>&1 1>&2 2>&3)
+    if [[ "$FTP_UPLOAD_OPTIONS" ]]; then
+      ftpUploadOptions=($FTP_UPLOAD_OPTIONS)
+    elif [[ "$FTP_UPLOAD_OPTS" ]]; then
+      ftpUploadOptions=($FTP_UPLOAD_OPTS)
+    else
+      ftpUploadOptions=($(whiptail --checklist "Choose the types of files to upload:" 20 80 7 \
+      "ROM" "The resultant of the building process" ON \
+      "ROM_OTA" "The OTA (over-the-air) build" ON \
+      "ROM_IMAGE" "Images (all files that have an img extension)" OFF \
+      3>&1 1>&2 2>&3))
+    fi
+    if [[ "$FTP_SERVER" ]]; then
+      ftpServer="$FTP_SERVER"
+    else
+      ftpServer=$(whiptail --inputbox "Enter the FTP server:" 10 40 "uploads.androidfilehost.com" 3>&1 1>&2 2>&3)
+    fi
+    if [[ "$FTP_USERNAME" ]]; then
+      ftpUsername="$FTP_USERNAME"
+    else
+      ftpUsername=$(whiptail --inputbox "Enter your username for the FTP server:" 10 40 3>&1 1>&2 2>&3)
+    fi
+    if [[ "$FTP_PASSWORD" ]]; then
+      ftpPassword="$FTP_PASSWORD"
+    else
+      ftpPassword=$(whiptail --passwordbox "Enter your password for the FTP server:" 10 40 3>&1 1>&2 2>&3)
+    fi
   else
     doneExec
   fi
@@ -29,13 +55,30 @@ ftpDialog() {
 buildDialog() {
   devices=$(whiptail --inputbox "Enter a list of device codenames. Separate each device codename by a space." 10 40 3>&1 1>&2 2>&3)
   build $devices
-  ftpDialog
+  ftpConfigDialog
   for i in "${#outdirs[@]}";
   do
     echo "Device ${devices[i]} built at ${outdirs[i]}."
-    if [[ -n $ftpServer ]] && [[ -n $username ]] && [[ -n $password ]]; then
-      ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build will be uploaded to." 10 40 3>&1 1>&2 2>&3)
-      ftpUpload $ftpServer ${outdirs[i]} $ftpLocation $ftpUsername $ftpPassword
+    if [[ -n $ftpServer ]] && [[ -n $ftpUsername ]] && [[ -n $ftpPassword ]]; then
+      for optionsI in "${ftpUploadOptions[@]}";
+      do
+        if [[ optionsI == "ROM" ]]; then
+          rom=$(ls -tr ${outdirs[i]/lineage-*.zip} | tail -1)
+          ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[i]} will be uploaded to." 10 40 3>&1 1>&2 2>&3)
+          ftpUpload $ftpServer $rom $ftpLocation $ftpUsername $ftpPassword
+        elif [[ optionsI == "ROM_OTA" ]]; then
+          romOTA=$(ls -tr ${outdirs[i]/lineage_*-ota-*.zip} | tail -1)
+          ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[i]} will be uploaded to." 10 40 3>&1 1>&2 2>&3)
+          ftpUpload $ftpServer romOTA $ftpLocation $ftpUsername $ftpPassword
+        elif [[ optionsI == "ROM_IMAGE" ]]; then
+          romImage=($(ls ${outdirs[i]/*.img}))
+          ftpLocation=$(whiptail --inputbox "Enter the folder path of where the images for device ${devices[i]} will be uploaded to." 10 40 3>&1 1>&2 2>&3)
+          for imageI in "${romImage[@]}";
+          do
+            ftpUpload $ftpServer $imageI $ftpLocation $ftpUsername $ftpPassword
+          done
+        fi
+      done
     fi
   done
 }
