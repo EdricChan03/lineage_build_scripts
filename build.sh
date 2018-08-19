@@ -7,23 +7,42 @@ trap "exit" INT
 # Source common functions
 source ./functions.sh
 
+ftpServer=""
+ftpUsername=""
+ftpPassword=""
 # If a command exits with a non-zero status code, exit this program immediately
 # See `set --help` for more info
 # set -e
 
+ftpDialog() {
+  whiptail --yesno "Would you like to upload the builds via FTP?" 10 25
+  if [[ $? -eq 0 ]]; then
+    ftpServer=$(whiptail --inputbox "Enter the FTP server:" 10 40 "uploads.androidfilehost.com" 3>&1 1>&2 2>&3)
+    ftpUsername=$(whiptail --inputbox "Enter your username for the FTP server:" 10 40 3>&1 1>&2 2>&3)
+    ftpPassword=$(whiptail --passwordbox "Enter your password for the FTP server:" 10 40 3>&1 1>&2 2>&3)
+  else
+    doneExec
+  fi
+}
+
 # Function for showing an input dialog on what device codenames to build
 buildDialog() {
-  devices=$(whiptail --title "Device build dialog" --inputbox "Enter a list of device codenames. Separate each device codename by a space." 10 40 3>&1 1>&2 2>&3)
+  devices=$(whiptail --inputbox "Enter a list of device codenames. Separate each device codename by a space." 10 40 3>&1 1>&2 2>&3)
   build $devices
+  ftpDialog
   for i in "${#outdirs[@]}";
   do
     echo "Device ${devices[i]} built at ${outdirs[i]}."
+    if [[ -n $ftpServer ]] && [[ -n $username ]] && [[ -n $password ]]; then
+      ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build will be uploaded to." 10 40 3>&1 1>&2 2>&3)
+      ftpUpload $ftpServer ${outdirs[i]} $ftpLocation $ftpUsername $ftpPassword
+    fi
   done
 }
 
 # Function for showing a confirmation dialog when a command has finished executing
 doneExec() {
-  whiptail --title "Confirm dialog" --yesno "Go back to main menu?" 10 25
+  whiptail --yesno "Go back to main menu?" 10 25
   if [[ $? -eq 0 ]]; then
     mainMenu
   else
@@ -34,7 +53,7 @@ doneExec() {
 
 # Function for showing a confirmation dialog on whether to exit the program
 confirmExit() {
-  whiptail --title "Confirm dialog" --yesno "Are you sure you want to exit?" 10 25
+  whiptail --yesno "Are you sure you want to exit?" 10 25
   if [[ $? -eq 0 ]]; then
     infoBold "Exiting..."
     exit 0

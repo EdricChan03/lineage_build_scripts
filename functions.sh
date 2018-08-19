@@ -94,6 +94,35 @@ warnBold() {
   fi
 }
 
+# Uploads a file to the FTP server
+# @param $1 The FTP server URL. (Example: uploads.androidfilehost.com)
+# @param $2 The file to upload. (A relative or absolute path to the file)
+# @param $3 The folder to upload the file to.
+# @param $4 The username
+# @param $5 The password
+# @note If parmaeters 4 and 5 are not specified, the function will use the variables
+#       $FTP_USENAME for the username and $FTP_PASSWORD for the password
+ftpUpload() {
+  if [ $# -ne 5 ]; then
+    errorBold "Please enter exactly 5 parameters"
+  else
+    ftpServer="${1:-uploads.androidfilehost.com}"
+    fileToUpload="$2"
+    ftpUploadFolder="$3"
+    ftpUsername="${4:-$FTP_USERNAME}"
+    ftpPassword="${5:-$FTP_PASSWORD}"
+    curl $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword
+    infoBold "Uploading..."
+    curl -T $fileToUpload $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword
+    if [ $? -eq 0 ]; then
+      # File was successfully uploaded
+      successBold "Successfully uploaded build to $ftpServer!"
+    else
+      errorBold "An error occured while attempting to upload to $ftpServer. Error code: $?"
+    fi
+  fi
+}
+
 # Checks if a function specified currently exists
 # @param $1 The function to check
 # @return 1 if the function exists, 0 if it doesn't
@@ -153,8 +182,9 @@ buildDevices() {
           infoBold "Building for $i..."
           breakfast "$i"
           brunch "$i"
-          echo "OUT result: $OUT"
-          outdirs+=($OUT)
+          # This line gets the latest LineageOS build available in the out directory.
+          result=$(ls -tr $OUT/lineage-*.zip | tail -1)
+          outdirs+=(result)
       done
     else
       errorBold "The functions breakfast and/or brunch do not exist. Have you sourced the AOSP and LineageOS build tools?"
@@ -173,27 +203,4 @@ build() {
   # else
   #   echo no array
   # fi
-}
-
-# Uploads a file to the FTP server
-# @param $1 The FTP server URL. (Example: uploads.androidfilehost.com)
-# @param $2 The file to upload. (A relative or absolute path to the file)
-# @param $3 The folder to upload the file to.
-# @param $4 The username
-# @param $5 The password
-# @note If parmaeters 4 and 5 are not specified, the function will use the variables
-#       $FTP_USENAME for the username and $FTP_PASSWORD for the password
-ftpUpload() {
-  ftpServer="${1:-uploads.androidfilehost.com}"
-  fileToUpload="$2"
-  ftpUploadFolder="$3"
-  ftpUsername="${4:-$FTP_USERNAME}"
-  ftpPassword="${5:-$FTP_PASSWORD}"
-  curl -T $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword
-  if [ $? -eq 0 ];
-    # File was successfully uploaded
-    successBold "Successfully uploaded build to $ftpServer!"
-  else
-    errorBold "An error occured while attempting to upload to $ftpServer. Error code: $?"
-  fi
 }
