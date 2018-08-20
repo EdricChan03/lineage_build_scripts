@@ -34,7 +34,7 @@ ftpConfigDialog() {
     if [[ "$FTP_SERVER" ]]; then
       ftpServer="$FTP_SERVER"
     else
-      ftpServer=$(whiptail --inputbox "Enter the FTP server:" 0 0 "uploads.androidfilehost.com" 3>&1 1>&2 2>&3)
+      ftpServer=$(whiptail --inputbox "Enter the FTP server:" 0 0 "ftp://uploads.androidfilehost.com" 3>&1 1>&2 2>&3)
     fi
     if [[ "$FTP_USERNAME" ]]; then
       ftpUsername="$FTP_USERNAME"
