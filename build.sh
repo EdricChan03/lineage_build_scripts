@@ -59,24 +59,31 @@ buildDialog() {
   outdirsLength="${#outdirs[@]}"
   for (( i=1; i<${outdirsLength}+1; i++ ));
   do
-    echo "Device ${devices[$i-1]} built at ${outdirs[$i-1]}."
-    if [[ -n $ftpServer ]] && [[ -n $ftpUsername ]] && [[ -n $ftpPassword ]]; then
+    infoBold "Device ${devices[$i-1]} built at ${outdirs[$i-1]}."
+    if [[ "$ftpServer" ]] && [[ "$ftpUsername" ]] && [[ "$ftpPassword" ]] && [[ "$ftpUploadOptions" ]]; then
+      # echo "${ftpUploadOptions[@]}"
       for optionsI in "${ftpUploadOptions[@]}";
       do
-        if [[ $optionsI == "ROM" ]]; then
+        # Removes the quotation marks from the variable
+        optionsI="${optionsI%\"}"
+        optionsI="${optionsI#\"}"
+        if [[ "$optionsI" = "ROM" ]]; then
+          infoBold "Uploading ROM..."
           rom=$(ls -tr ${outdirs[$i-1]/lineage-*.zip} | tail -1)
           ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[i]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
-          ftpUpload $ftpServer $rom $ftpLocation $ftpUsername $ftpPassword
-        elif [[ $optionsI == "ROM_OTA" ]]; then
+          ftpUpload "$ftpServer" $outdirs[$i-1]/$rom "$ftpLocation" "$ftpUsername" "$ftpPassword"
+        elif [[ "$optionsI" = "ROM_OTA" ]]; then
+          infoBold "Uploading OTA..."
           romOTA=$(ls -tr ${outdirs[$i-1]/lineage_*-ota-*.zip} | tail -1)
           ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[i]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
-          ftpUpload $ftpServer $romOTA $ftpLocation $ftpUsername $ftpPassword
-        elif [[ $optionsI == "ROM_IMAGE" ]]; then
+          ftpUpload "$ftpServer" $outdirs[$i-1]/$romOTA "$ftpLocation" "$ftpUsername" "$ftpPassword"
+        elif [[ "$optionsI" = "ROM_IMAGE" ]]; then
+          infoBold "Uploading images..."
           romImage=($(ls ${outdirs[$i-1]/*.img}))
           ftpLocation=$(whiptail --inputbox "Enter the folder path of where the images for device ${devices[i]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
           for imageI in "${romImage[@]}";
           do
-            ftpUpload $ftpServer $imageI $ftpLocation $ftpUsername $ftpPassword
+            ftpUpload "$ftpServer" $outdirs[$i-1]/$imageI "$ftpLocation" "$ftpUsername" "$ftpPassword"
           done
         fi
       done
