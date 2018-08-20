@@ -102,6 +102,7 @@ warnBold() {
 # @param $5 The password
 # @note If parmaeters 4 and 5 are not specified, the function will use the variables
 #       $FTP_USENAME for the username and $FTP_PASSWORD for the password
+# @return The exit status code of the `curl` command
 ftpUpload() {
   if [ $# -ne 5 ]; then
     errorBold "Please enter exactly 5 parameters"
@@ -114,12 +115,7 @@ ftpUpload() {
     curl $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword --ftp-create-dirs
     infoBold "Uploading..."
     curl -T $fileToUpload $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword
-    if [ $? -eq 0 ]; then
-      # File was successfully uploaded
-      successBold "Successfully uploaded build to $ftpServer!"
-    else
-      errorBold "An error occured while attempting to upload to $ftpServer. Error code: $?"
-    fi
+    return $?
   fi
 }
 
