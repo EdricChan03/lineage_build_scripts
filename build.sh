@@ -27,6 +27,7 @@ ftpConfigDialog() {
     else
       ftpUploadOptions=($(whiptail --checklist "Choose the types of files to upload:" 0 0 0 \
       "ROM" "The resultant of the building process" ON \
+      "ROM_MD5SUM" "The verification files for the build" ON \
       "ROM_OTA" "The OTA (over-the-air) build" ON \
       "ROM_IMAGE" "Images (all files that have an img extension)" OFF \
       3>&1 1>&2 2>&3))
@@ -79,6 +80,19 @@ buildDialog() {
               # just to show that a file has been uploaded.
               # whiptail --msgbox "Successfully uploaded $rom to \n$ftpServer/$ftpLocation!" 0 0
               successBold "Successfully uploaded $rom to \n$ftpServer/$ftpLocation!"
+            else
+              whiptail --msgbox "An error occured while uploading. Error code: $?\nSee https://ec.haxx.se/usingcurl-returns.html#available-exit-codes for more info" 0 0
+            fi
+          elif [[ "$optionsI" = "ROM_MD5SUM" ]]; then
+            infoBold "Uploading md5sum file..."
+            romMD5SUM=$(ls -tr ${outdirs[$i-1]}/lineage-*.zip.md5sum | tail -1)
+            ftpLocation=$(whiptail --inputbox "Enter the folder path of where the md5sum for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
+            ftpUpload "$ftpServer" $romMD5SUM "$ftpLocation" "$ftpUsername" "$ftpPassword"
+            if [[ $? -eq 0 ]]; then
+              # Don't show dialogs for now as this can be quite repetitive to keep showing alerts
+              # just to show that a file has been uploaded.
+              # whiptail --msgbox "Successfully uploaded $rom to \n$ftpServer/$ftpLocation!" 0 0
+              successBold "Successfully uploaded $romMD5SUM to \n$ftpServer/$ftpLocation!"
             else
               whiptail --msgbox "An error occured while uploading. Error code: $?\nSee https://ec.haxx.se/usingcurl-returns.html#available-exit-codes for more info" 0 0
             fi
