@@ -64,15 +64,15 @@ buildDialog() {
       for optionsI in "${ftpUploadOptions[@]}";
       do
         if [[ $optionsI == "ROM" ]]; then
-          rom=$(ls -tr ${outdirs[$i]/lineage-*.zip} | tail -1)
+          rom=$(ls -tr ${outdirs[$i-1]/lineage-*.zip} | tail -1)
           ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[i]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
           ftpUpload $ftpServer $rom $ftpLocation $ftpUsername $ftpPassword
         elif [[ $optionsI == "ROM_OTA" ]]; then
-          romOTA=$(ls -tr ${outdirs[$i]/lineage_*-ota-*.zip} | tail -1)
+          romOTA=$(ls -tr ${outdirs[$i-1]/lineage_*-ota-*.zip} | tail -1)
           ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[i]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
-          ftpUpload $ftpServer romOTA $ftpLocation $ftpUsername $ftpPassword
+          ftpUpload $ftpServer $romOTA $ftpLocation $ftpUsername $ftpPassword
         elif [[ $optionsI == "ROM_IMAGE" ]]; then
-          romImage=($(ls ${outdirs[$i]/*.img}))
+          romImage=($(ls ${outdirs[$i-1]/*.img}))
           ftpLocation=$(whiptail --inputbox "Enter the folder path of where the images for device ${devices[i]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
           for imageI in "${romImage[@]}";
           do
