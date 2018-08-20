@@ -56,7 +56,8 @@ buildDialog() {
   devices=$(whiptail --inputbox "Enter a list of device codenames. Separate each device codename by a space." 0 0 3>&1 1>&2 2>&3)
   build $devices
   ftpConfigDialog
-  for i in "${#outdirs[@]}";
+  outdirsLength="${#outdirs[@]}"
+  for (( i=0; i<${outdirsLength}+1; i++ ));
   do
     echo "Device ${devices[i]} built at ${outdirs[i]}."
     if [[ -n $ftpServer ]] && [[ -n $ftpUsername ]] && [[ -n $ftpPassword ]]; then
@@ -123,6 +124,8 @@ mainMenuHandler() {
     candroid
     buildDialog
     doneExec
+  elif [[ "$menuResult" = "Upload" ]]; then
+    whiptail --title "Notice" --msgbox "The upload section is coming soon! Stay tuned." 0 0
   elif [[ "$menuResult" = "Help" ]]; then
     whiptail --title "Notice" --msgbox "The help guide is coming soon! Stay tuned." 0 0
     mainMenu

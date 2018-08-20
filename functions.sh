@@ -3,8 +3,8 @@
 # Enable colour
 CLICOLOR=1
 
-devices=()
-outdirs=()
+export devices=()
+export outdirs=()
 
 # Logs a statement with a red colour and exits the Terminal
 # @param $1 The statement to log
@@ -111,7 +111,7 @@ ftpUpload() {
     ftpUploadFolder="$3"
     ftpUsername="${4:-$FTP_USERNAME}"
     ftpPassword="${5:-$FTP_PASSWORD}"
-    curl $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword
+    curl $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword --ftp-create-dirs
     infoBold "Uploading..."
     curl -T $fileToUpload $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword
     if [ $? -eq 0 ]; then
@@ -183,6 +183,7 @@ buildDevices() {
           breakfast "$i"
           brunch "$i"
           outdirs+=($OUT)
+          echo "${outdirs[@]}"
       done
     else
       errorBold "The functions breakfast and/or brunch do not exist. Have you sourced the AOSP and LineageOS build tools?"
