@@ -57,7 +57,7 @@ buildDialog() {
   build $devices
   ftpConfigDialog
   outdirsLength="${#outdirs[@]}"
-  for (( i=0; i<${outdirsLength}+1; i++ ));
+  for (( i=1; i<${outdirsLength}+1; i++ ));
   do
     echo "Device ${devices[i]} built at ${outdirs[i]}."
     if [[ -n $ftpServer ]] && [[ -n $ftpUsername ]] && [[ -n $ftpPassword ]]; then
