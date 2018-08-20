@@ -53,7 +53,7 @@ ftpConfigDialog() {
 
 # Function for showing an input dialog on what device codenames to build
 buildDialog() {
-  devices=$(whiptail --inputbox "Enter a list of device codenames. Separate each device codename by a space." 0 0 3>&1 1>&2 2>&3)
+  devices=$(whiptail --inputbox "Enter a list of device codenames.\nSeparate each device codename by a space." 0 0 3>&1 1>&2 2>&3)
   # Check if user pressed the Okay button
   if [[ $? -eq 0 ]] && [[ "$devices" ]]; then
     build $devices
@@ -150,7 +150,13 @@ mainMenuHandler() {
 mainMenu() {
   choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Help" "Show help.")
   results=$(whiptail --title "Utilities" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
-  mainMenuHandler "$results"
+  if [[ $? -eq 0 ]]; then
+    mainMenuHandler "$results"
+  else
+    # User pressed escape or on the Cancel button
+    # Exit the menu in this case
+    exit 0
+  fi
 }
 
 mainMenu
