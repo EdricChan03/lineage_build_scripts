@@ -75,7 +75,10 @@ buildDialog() {
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
             ftpUpload "$ftpServer" $rom "$ftpLocation" "$ftpUsername" "$ftpPassword"
             if [[ $? -eq 0 ]]; then
-              whiptail --msgbox "Successfully uploaded $rom to \n$ftpServer/$ftpLocation!" 0 0
+              # Don't show dialogs for now as this can be quite repetitive to keep showing alerts
+              # just to show that a file has been uploaded.
+              # whiptail --msgbox "Successfully uploaded $rom to \n$ftpServer/$ftpLocation!" 0 0
+              successBold "Successfully uploaded $rom to \n$ftpServer/$ftpLocation!"
             else
               whiptail --msgbox "An error occured while uploading. Error code: $?\nSee https://ec.haxx.se/usingcurl-returns.html#available-exit-codes for more info" 0 0
             fi
@@ -85,7 +88,10 @@ buildDialog() {
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
             ftpUpload "$ftpServer" $romOTA "$ftpLocation" "$ftpUsername" "$ftpPassword"
             if [[ $? -eq 0 ]]; then
-              whiptail --msgbox "Successfully uploaded $romOTA to \n$ftpServer/$ftpLocation!" 0 0
+              # Don't show dialogs for now as this can be quite repetitive to keep showing alerts
+              # just to show that a file has been uploaded.
+              # whiptail --msgbox "Successfully uploaded $romOTA to \n$ftpServer/$ftpLocation!" 0 0
+              successBold "Successfully uploaded $romOTA to \n$ftpServer/$ftpLocation!"
             else
               whiptail --msgbox "An error occured while uploading. Error code: $?\nSee https://ec.haxx.se/usingcurl-returns.html#available-exit-codes for more info"
             fi
@@ -95,9 +101,13 @@ buildDialog() {
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the images for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
             for imageI in "${romImage[@]}";
             do
+              infoBold "Uploading $imageI..."
               ftpUpload "$ftpServer" $imageI "$ftpLocation" "$ftpUsername" "$ftpPassword"
               if [[ $? -eq 0 ]]; then
-                whiptail --msgbox "Successfully uploaded $imageI to \n$ftpServer/$ftpLocation!" 0 0
+                # Don't show dialogs for now as this can be quite repetitive to keep showing alerts
+                # just to show that a file has been uploaded.
+                # whiptail --msgbox "Successfully uploaded $imageI to \n$ftpServer/$ftpLocation!" 0 0
+                successBold "Successfully uploaded $imageI to \n$ftpServer/$ftpLocation!"
               else
                 whiptail --msgbox "An error occured while uploading. Error code: $?\nSee https://ec.haxx.se/usingcurl-returns.html#available-exit-codes for more info" 0 0
               fi
