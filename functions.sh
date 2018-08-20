@@ -113,7 +113,6 @@ ftpUpload() {
     ftpUsername="${4:-$FTP_USERNAME}"
     ftpPassword="${5:-$FTP_PASSWORD}"
     curl $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword --ftp-create-dirs
-    infoBold "Uploading..."
     curl -T $fileToUpload $ftpServer/$ftpUploadFolder/ --user $ftpUsername:$ftpPassword
     return $?
   fi
