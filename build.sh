@@ -54,41 +54,48 @@ ftpConfigDialog() {
 # Function for showing an input dialog on what device codenames to build
 buildDialog() {
   devices=$(whiptail --inputbox "Enter a list of device codenames. Separate each device codename by a space." 0 0 3>&1 1>&2 2>&3)
-  build $devices
-  ftpConfigDialog
-  outdirsLength="${#outdirs[@]}"
-  for (( i=1; i<${outdirsLength}+1; i++ ));
-  do
-    infoBold "Device ${devices[$i-1]} built at ${outdirs[$i-1]}."
-    if [[ "$ftpServer" ]] && [[ "$ftpUsername" ]] && [[ "$ftpPassword" ]] && [[ "$ftpUploadOptions" ]]; then
-      # echo "${ftpUploadOptions[@]}"
-      for optionsI in "${ftpUploadOptions[@]}";
-      do
-        # Removes the quotation marks from the variable
-        optionsI="${optionsI%\"}"
-        optionsI="${optionsI#\"}"
-        if [[ "$optionsI" = "ROM" ]]; then
-          infoBold "Uploading ROM..."
-          rom=$(ls -tr ${outdirs[$i-1]}/lineage-*.zip | tail -1)
-          ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
-          ftpUpload "$ftpServer" $rom "$ftpLocation" "$ftpUsername" "$ftpPassword"
-        elif [[ "$optionsI" = "ROM_OTA" ]]; then
-          infoBold "Uploading OTA..."
-          romOTA=$(ls -tr ${outdirs[$i-1]/lineage_*-ota-*.zip} | tail -1)
-          ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
-          ftpUpload "$ftpServer" $romOTA "$ftpLocation" "$ftpUsername" "$ftpPassword"
-        elif [[ "$optionsI" = "ROM_IMAGE" ]]; then
-          infoBold "Uploading images..."
-          romImage=($(ls ${outdirs[$i-1]}/*.img))
-          ftpLocation=$(whiptail --inputbox "Enter the folder path of where the images for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
-          for imageI in "${romImage[@]}";
-          do
-            ftpUpload "$ftpServer" $imageI "$ftpLocation" "$ftpUsername" "$ftpPassword"
-          done
-        fi
-      done
-    fi
-  done
+  # Check if user pressed the Okay button
+  if [[ $? -eq 0 ]] && [[ "$devices" ]]; then
+    build $devices
+    ftpConfigDialog
+    outdirsLength="${#outdirs[@]}"
+    for (( i=1; i<${outdirsLength}+1; i++ ));
+    do
+      infoBold "Device ${devices[$i-1]} built at ${outdirs[$i-1]}."
+      if [[ "$ftpServer" ]] && [[ "$ftpUsername" ]] && [[ "$ftpPassword" ]] && [[ "$ftpUploadOptions" ]]; then
+        # echo "${ftpUploadOptions[@]}"
+        for optionsI in "${ftpUploadOptions[@]}";
+        do
+          # Removes the quotation marks from the variable
+          optionsI="${optionsI%\"}"
+          optionsI="${optionsI#\"}"
+          if [[ "$optionsI" = "ROM" ]]; then
+            infoBold "Uploading ROM..."
+            rom=$(ls -tr ${outdirs[$i-1]}/lineage-*.zip | tail -1)
+            ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
+            ftpUpload "$ftpServer" $rom "$ftpLocation" "$ftpUsername" "$ftpPassword"
+          elif [[ "$optionsI" = "ROM_OTA" ]]; then
+            infoBold "Uploading OTA..."
+            romOTA=$(ls -tr ${outdirs[$i-1]/lineage_*-ota-*.zip} | tail -1)
+            ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
+            ftpUpload "$ftpServer" $romOTA "$ftpLocation" "$ftpUsername" "$ftpPassword"
+          elif [[ "$optionsI" = "ROM_IMAGE" ]]; then
+            infoBold "Uploading images..."
+            romImage=($(ls ${outdirs[$i-1]}/*.img))
+            ftpLocation=$(whiptail --inputbox "Enter the folder path of where the images for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
+            for imageI in "${romImage[@]}";
+            do
+              ftpUpload "$ftpServer" $imageI "$ftpLocation" "$ftpUsername" "$ftpPassword"
+            done
+          fi
+        done
+      fi
+    done
+  else
+    # User didn't input anything or pressed the escape key (which exits with status code 255)
+    # Head back to the main menu
+    mainMenu
+  fi
 }
 
 # Function for showing a confirmation dialog when a command has finished executing
