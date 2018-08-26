@@ -29,12 +29,10 @@ Environmental Variable | Description | Accepted values
 ---|---|---
 `FTP_PASSWORD` | The password of your username of the FTP seerver that you're uploading to | A string
 `FTP_SERVER` | The FTP server that you're uploading builds to. (Note: Please add a `ftp://` prefix to the variable if you're using FTP) | A string
-`FTP_UPLOAD_OPTIONS` / `FTP_UPLOAD_OPTS` | The build types that you would like to upload. | See [`FTP_UPLOAD_OPTS` accepted values](#ftp_upload_opts-accepted-values)
+`FTP_UPLOAD_OPTIONS` / `FTP_UPLOAD_OPTS` | The build types that you would like to upload. | See [`FTP_UPLOAD_OPTS` accepted values](#ftp_upload_options-accepted-values)
 `FTP_USERNAME` | The username of the FTP server that you're uploading the builds to. | A string
 
-#### `FTP_UPLOAD_OPTS` accepted values
-
-A string with spaces to indicates an option.
+#### `FTP_UPLOAD_OPTIONS` accepted values
 
 The accepted values are listed below:
 
@@ -43,6 +41,12 @@ The accepted values are listed below:
 - `ROM_OTA`: The OTA of the build
 - `ROM_IMAGES`: All files with a `img` extension
 
+##### Example
+
+```bash
+export FTP_UPLOAD_OPTIONS="ROM ROM_OTA" # This should only upload the `zip` file and the OTA
+export FTP_UPLOAD_OPTIONS="ROM ROM_MD5SUM" # This should only upload the `zip` file
+```
 ---
 
 ### Other
