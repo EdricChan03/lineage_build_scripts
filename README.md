@@ -16,3 +16,38 @@ Build scripts for LineageOS.
 4. Execute the script by typing `./build.sh` in your Terminal and pressing enter.
 
 That's it!
+
+---
+
+## Variables
+
+This script accepts the following environment variables:
+
+### FTP
+
+Environmental Variable | Description | Accepted values
+---|---|---
+`FTP_PASSWORD` | The password of your username of the FTP seerver that you're uploading to | A string
+`FTP_SERVER` | The FTP server that you're uploading builds to. (Note: Please add a `ftp://` prefix to the variable if you're using FTP) | A string
+`FTP_UPLOAD_OPTIONS` / `FTP_UPLOAD_OPTS` | The build types that you would like to upload. | See [`FTP_UPLOAD_OPTS` accepted values](#FTP_UPLOAD_OPTS-accepted-values)
+`FTP_USERNAME` | The username of the FTP server that you're uploading the builds to. | A string
+
+#### `FTP_UPLOAD_OPTS` accepted values
+
+A string with spaces to indicates an option.
+
+The accepted values are listed below:
+
+- `ROM_MD5SUM`: `md5sum` file used for verification of the build
+- `ROM`: The build `zip` file
+- `ROM_OTA`: The OTA of the build
+- `ROM_IMAGES`: All files with a `img` extension
+
+---
+
+### Other
+
+Environmental Variable | Description | Accepted values
+---|---|---
+`SHOW_FILEPATH` / `SHOW_FILE_PATH` | Whether to show a file's path | `true` / `false`
+`DEBUG_MODE` / `SHOW_DEBUG` / `SHOW_DEBUG_MSGS` | Whether to show debug messages | `true` / `false`
