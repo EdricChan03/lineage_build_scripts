@@ -53,5 +53,5 @@ export FTP_UPLOAD_OPTIONS="ROM ROM_MD5SUM" # This should only upload the `zip` f
 
 Environmental Variable | Description | Accepted values
 ---|---|---
-`SHOW_FILEPATH` / `SHOW_FILE_PATH` | Whether to show a file's path | `true` / `false`
 `DEBUG_MODE` / `SHOW_DEBUG` / `SHOW_DEBUG_MSGS` | Whether to show debug messages | `true` / `false`
+`SHOW_FILEPATH` / `SHOW_FILE_PATH` | Whether to show a file's path | `true` / `false`
