@@ -12,6 +12,26 @@ ftpUsername=""
 ftpPassword=""
 # Upload options for FTP
 ftpUploadOptions=()
+
+# Whether to show the file path
+showFilePath=true
+
+# Whether to show debug messages
+showDebug=false
+
+if [[ "$SHOW_FILE_PATH" ]]; then
+  showFilePath="$SHOW_FILE_PATH"
+elif [[ "$SHOW_FILEPATH" ]]; then
+  showFilePath="$SHOW_FILEPATH"
+fi
+
+if [[ "$DEBUG_MODE" ]]; then
+  showDebug="$DEBUG_MODE"
+elif [[ "$SHOW_DEBUG" ]]; then
+  showDebug="$SHOW_DEBUG"
+elif [[ "$SHOW_DEBUG_MSGS" ]]; then
+  showDebug="$SHOW_DEBUG_MSGS"
+fi
 # If a command exits with a non-zero status code, exit this program immediately
 # See `set --help` for more info
 # set -e
@@ -62,7 +82,7 @@ buildDialog() {
     outdirsLength="${#outdirs[@]}"
     for (( i=1; i<${outdirsLength}+1; i++ ));
     do
-      infoBold "Device ${devices[$i-1]} built at ${outdirs[$i-1]}."
+      # infoBold "Device ${devices[$i-1]} built at ${outdirs[$i-1]}."
       if [[ "$ftpServer" ]] && [[ "$ftpUsername" ]] && [[ "$ftpPassword" ]] && [[ "$ftpUploadOptions" ]]; then
         # echo "${ftpUploadOptions[@]}"
         for optionsI in "${ftpUploadOptions[@]}";
@@ -71,9 +91,13 @@ buildDialog() {
           optionsI="${optionsI%\"}"
           optionsI="${optionsI#\"}"
           if [[ "$optionsI" = "ROM" ]]; then
-            infoBold "Uploading ROM..."
             rom=$(ls -tr ${outdirs[$i-1]}/lineage-*.zip | tail -1)
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
+            if [[ "$showFilePath" = true ]]; then
+              infoBold "Uploading $(basename $rom) ($rom)..."
+            else
+              infoBold "Uploading $(basename $rom)..."
+            fi
             ftpUpload "$ftpServer" $rom "$ftpLocation" "$ftpUsername" "$ftpPassword"
             if [[ $? -eq 0 ]]; then
               # Don't show dialogs for now as this can be quite repetitive to keep showing alerts
@@ -97,9 +121,13 @@ buildDialog() {
               whiptail --msgbox "An error occured while uploading. Error code: $?\nSee https://ec.haxx.se/usingcurl-returns.html#available-exit-codes for more info" 0 0
             fi
           elif [[ "$optionsI" = "ROM_OTA" ]]; then
-            infoBold "Uploading OTA..."
             romOTA=$(ls -tr ${outdirs[$i-1]}/lineage_*-ota-*.zip | tail -1)
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
+            if [[ "$showFilePath" = true ]]; 
+              infoBold "Uploading $(basename $romOTA) ($romOTA)..."
+            else
+              infoBold "Uploading $(basename $romOTA)..."
+            fi
             ftpUpload "$ftpServer" $romOTA "$ftpLocation" "$ftpUsername" "$ftpPassword"
             if [[ $? -eq 0 ]]; then
               # Don't show dialogs for now as this can be quite repetitive to keep showing alerts
@@ -115,7 +143,11 @@ buildDialog() {
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the images for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
             for imageI in "${romImage[@]}";
             do
-              infoBold "Uploading $imageI..."
+              if [[ "$showFilePath" = true ]]; then
+                infoBold "Uploading $(basename $imageI) ($imageI)..."
+              else
+                infoBold "Uploading $(basename $imageI)..."
+              fi
               ftpUpload "$ftpServer" $imageI "$ftpLocation" "$ftpUsername" "$ftpPassword"
               if [[ $? -eq 0 ]]; then
                 # Don't show dialogs for now as this can be quite repetitive to keep showing alerts
