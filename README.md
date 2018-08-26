@@ -29,7 +29,7 @@ Environmental Variable | Description | Accepted values
 ---|---|---
 `FTP_PASSWORD` | The password of your username of the FTP seerver that you're uploading to | A string
 `FTP_SERVER` | The FTP server that you're uploading builds to. (Note: Please add a `ftp://` prefix to the variable if you're using FTP) | A string
-`FTP_UPLOAD_OPTIONS` / `FTP_UPLOAD_OPTS` | The build types that you would like to upload. | See [`FTP_UPLOAD_OPTS` accepted values](#FTP_UPLOAD_OPTS-accepted-values)
+`FTP_UPLOAD_OPTIONS` / `FTP_UPLOAD_OPTS` | The build types that you would like to upload. | See [`FTP_UPLOAD_OPTS` accepted values](#ftp_upload_opts-accepted-values)
 `FTP_USERNAME` | The username of the FTP server that you're uploading the builds to. | A string
 
 #### `FTP_UPLOAD_OPTS` accepted values
