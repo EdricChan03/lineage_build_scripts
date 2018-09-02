@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Enable colour
-CLICOLOR=1
+export CLICOLOR=1
 
 export devices=()
 export outdirs=()
