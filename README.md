@@ -10,10 +10,17 @@ Build scripts for LineageOS.
 
 ## Getting started
 
-1. Follow the official [LineageOS guides](https://wiki.lineageos.org/devices/) to setting up LineageOS locally.
-2. Clone the source code for this repository on the parent directory of your LineageOS Source. (Should be `~/android`, where `~/android/lineage` is where the LineageOS Source is located at.)
-3. Ensure that the permissions for the files `build.sh` and `functions.sh` are set to `755`. You can verify this by running `ls -l`.
-4. Execute the script by typing `./build.sh` in your Terminal and pressing enter.
+1.  Follow the official [LineageOS guides](https://wiki.lineageos.org/devices/) to setting up LineageOS locally.
+2.  Clone the source code for this repository on the parent directory of your LineageOS Source. (Should be `~/android`, where `~/android/lineage` is where the LineageOS Source is located at.)
+3.  Ensure that the permissions for the files `build.sh` and `functions.sh` are set to `755`. You can verify this by running `ls -l` and checking the permissions. Here's what you should get:
+    ```bash
+    total 28
+    -rw-r--r-- 1 edricchan edricchan 2315 Aug 26 22:33 README.md
+    -rwxr-xr-x 1 edricchan edricchan 9776 Sep  2 22:16 build.sh
+    -rwxr-xr-x 1 edricchan edricchan 5393 Aug 21 00:02 functions.sh
+    -rwxrwxrwx 1 edricchan edricchan  509 Aug 26 22:05 testing.sh
+    ```
+4.  Execute the script by typing `./build.sh` in your Terminal and pressing enter.
 
 That's it!
 
@@ -21,7 +28,7 @@ That's it!
 
 ## Variables
 
-This script accepts the following environment variables:
+The build script accepts the following environment variables (which can be set in your shell's configuration file):
 
 ### FTP
 
