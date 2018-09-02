@@ -127,7 +127,7 @@ buildDialog() {
           elif [[ "$optionsI" = "ROM_OTA" ]]; then
             romOTA=$(ls -tr ${outdirs[$i-1]}/lineage_*-ota-*.zip | tail -1)
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the OTAs for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
-            if [[ "$showFilePath" = true ]]; 
+            if [[ "$showFilePath" = true ]]; then
               infoBold "Uploading $(basename $romOTA) ($romOTA) to $ftpLocation..."
             else
               infoBold "Uploading $(basename $romOTA) to $ftpLocation..."
