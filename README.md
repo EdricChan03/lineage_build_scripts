@@ -18,7 +18,6 @@ Build scripts for LineageOS.
     -rw-r--r-- 1 edricchan edricchan 2315 Aug 26 22:33 README.md
     -rwxr-xr-x 1 edricchan edricchan 9776 Sep  2 22:16 build.sh
     -rwxr-xr-x 1 edricchan edricchan 5393 Aug 21 00:02 functions.sh
-    -rwxrwxrwx 1 edricchan edricchan  509 Aug 26 22:05 testing.sh
     ```
 4.  Execute the script by typing `./build.sh` in your Terminal and pressing enter.
 
