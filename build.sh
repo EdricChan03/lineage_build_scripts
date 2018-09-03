@@ -94,9 +94,9 @@ buildDialog() {
             rom=$(ls -tr ${outdirs[$i-1]}/lineage-*.zip | tail -1)
             ftpLocation=$(whiptail --inputbox "Enter the folder path of where the build for device ${devices[$i-1]} will be uploaded to." 0 0 3>&1 1>&2 2>&3)
             if [[ "$showFilePath" = true ]]; then
-              infoBold "Uploading $(basename $rom) ($rom)..."
+              infoBold "Uploading $(basename $rom) ($rom) to $ftpLocation..."
             else
-              infoBold "Uploading $(basename $rom)..."
+              infoBold "Uploading $(basename $rom) to $ftpLocation..."
             fi
             ftpUpload "$ftpServer" $rom "$ftpLocation" "$ftpUsername" "$ftpPassword"
             if [[ $? -eq 0 ]]; then
