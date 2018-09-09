@@ -197,7 +197,6 @@ candroid() {
 
 # Sources AOSP's build tools
 sourceAOSP() {
-  echo $(pwd)
   source build/envsetup.sh
   successBold "Done sourcing!"
 }
