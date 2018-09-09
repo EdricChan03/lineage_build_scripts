@@ -1,5 +1,13 @@
 #!/bin/bash
 
+# TODOS:
+# 1. Use a consistent way of declaring variables.
+#    For example, consider using an environment variable instead
+#    of having to declare an extra variable for that environment
+#    variable.
+# 2. Add options for supplying flags to a command.
+# 3. Add more menu items.
+
 # When Ctrl+C is pressed, the whole program will exit
 # See https://stackoverflow.com/a/32146079 for more info
 trap "exit" INT
@@ -39,13 +47,84 @@ fi
 # See `set --help` for more info
 # set -e
 
+# Function for showing a dialog for phone options
+phoneOptsDialog() {
+  choices=("Flash latest build" "Flashes the latest LineageOS build to your phone" \
+  "Logcat" "Gets the logcat of your device" \
+  "Location of adb" "Outputs where ADB is installed on your computer" \
+  "Exit and return" "Exits this dialog and returns to the main menu." \
+  "Quit" "Quits the script.")
+  results=$(whiptail --title "Phone options" --menu "Choose one of the options below:" 0 0 0 "${choices[@]}" 3>&1 1>&2 2>&3)
+  if [[ $? -eq 0 ]]; then
+    if [[ "$results" = "Exit and return" ]]; then
+      mainMenu
+    elif [[ "$results" = "Quit" ]]; then
+      exit 0
+    elif [[ "$results" = "Location of adb" ]]; then
+      # Check if the adb command actually exists
+      if command -v adb 2>/dev/null; then
+        whiptail --msgbox "Location of adb: $(which adb)" 0 0
+      else
+        whiptail --msgbox "adb either doesn't exist or isn't installed!" 0 0
+      fi
+      phoneOptsDialog
+    elif [[ "$results" = "Logcat" ]]; then
+      logcatOutput=$(whiptail --inputbox "Specify the location that you would like to save the logcat to:\n(Leave blank to output to the console)" 0 0 3>&1 1>&2 2>&3)
+      if command -v adb 2>/dev/null; then
+        # Code adapted from https://github.com/LineageOS/android_vendor_lineage/blob/a03c0edd0c118fff893ca41ad944d4bbba27aa15/build/envsetup.sh#L110-L118
+        adb start-server # Prevent unexpected starting server message from adb get-state in the next line
+        if [ $(adb get-state) != device -a $(adb shell 'test -e /sbin/recovery 2> /dev/null; echo $?') != 0 ]; then
+          infoBold "No device is online. Waiting for one..."
+          infoBold "Please connect USB and/or enable USB debugging"
+          until [ $(adb get-state) = device -o $(adb shell 'test -e /sbin/recovery 2> /dev/null; echo $?') = 0 ]; do
+            sleep 1
+          done
+          successBold "Device found!"
+        fi
+        if [[ -n "$logcatOutput" ]]; then
+          logcatOutput="${logcatOutput/#\~/$HOME}"
+          adb logcat > $logcatOutput
+        else
+          whiptail --msgbox "TIP: Press Ctrl+C to terminate the logcat!" 0 0
+          adb logcat
+        fi
+      else
+        whiptail --msgbox "adb either doesn't exist or isn't installed!" 0 0
+      fi
+    elif [[ "$results" = "Flash latest build" ]]; then
+      OUT=$(whiptail --inputbox "Specify the out directory of the LineageOS build:" 0 0 3>&1 1>&2 2>&3)
+      OUT="${OUT/#\~/$HOME}"
+      if [[ "$OUT" ]]; then
+        candroid
+        sourceAOSP
+        # A little known fact:
+        # I found this not very well documented command that automatically
+        # flashes the latest LineageOS build to your phone connected via
+        # ADB.
+        # See this code: https://github.com/LineageOS/android_vendor_lineage/blob/a03c0edd0c118fff893ca41ad944d4bbba27aa15/build/envsetup.sh#L102-L142
+        # P.S. For some reason, all of the AOSP functions are food-themed
+        if [[ ! $(checkFunction eat) ]]; then
+          eat
+        else
+          errorBold "The eat command doesn't exist. Aborting.."
+          exit 1
+        fi
+      else
+        phoneOptsDialog
+      fi
+    fi
+  else
+    # User has either pressed the escape key or has clicked on cancel
+    doneExec
+  fi
+}
 # Function for saving storage
 manageStorageDialog() {
   choices=("Clear previous builds" "Clears all previous builds" \
   "Clear previous target files" "Clear previous target files used for OTA packages."\
   "Exit and return" "Exits this dialog and returns to the main menu." \
   "Quit" "Quits the script.")
-  results=$(whiptail --title "Manage storage" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
+  results=$(whiptail --title "Manage storage" --menu "Choose one of the options below:" 0 0 0 "${choices[@]}" 3>&1 1>&2 2>&3)
   if [[ $? -eq 0 ]]; then
     if [[ "$results" = "Exit and return" ]]; then
       mainMenu
@@ -267,6 +346,8 @@ mainMenuHandler() {
     doneExec
   elif [[ "$menuResult" = "Manage storage" ]]; then
     manageStorageDialog
+  elif [[ "$menuResult" = "Phone options" ]]; then
+    phoneOptsDialog
   elif [[ "$menuResult" = "About" ]]; then
     whiptail --title "About" --msgbox "build.sh: Version $scriptVersion" 0 0
     mainMenu
@@ -275,7 +356,12 @@ mainMenuHandler() {
 
 # Function for showing a menu when the program has been executed
 mainMenu() {
-  choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Manage storage" "Save storage!" "About" "Show information about this script.")
+  choices=("Exit" "Quit the script." \
+  "Sync" "Sync the Android Source." \
+  "Build" "Build for a device(s)." \
+  "Phone options" "Options for your phone (plugged in via ADB)" \
+  "Manage storage" "Manage your computer's storage." \
+  "About" "Show information about this script.")
   results=$(whiptail --title "Utilities" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
   if [[ $? -eq 0 ]]; then
     mainMenuHandler "$results"
