@@ -41,19 +41,44 @@ fi
 
 # Function for saving storage
 manageStorageDialog() {
-  choices=("Clear previous builds" "Clears all previous builds" "Clear previous target files" "Clear previous target files used for OTA packages." "Exit" "Exits this dialog.")
+  choices=("Clear previous builds" "Clears all previous builds" \
+  "Clear previous target files" "Clear previous target files used for OTA packages."\
+  "Exit and return" "Exits this dialog and returns to the main menu." \
+  "Quit" "Quits the script.")
   results=$(whiptail --title "Manage storage" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
   if [[ $? -eq 0 ]]; then
-    if [[ "$results" = "Exit" ]]; then
+    if [[ "$results" = "Exit and return" ]]; then
       doneExec
     else
       outDirectory=$(whiptail --inputbox "Enter the out directory:" 0 0 3>&1 1>&2 2>&3)
       if [[ "$results" = "Clear previous builds" ]]; then
         clearPrevBuilds $outDirectory
-        manageStorageDialog
+        if [[ $? -eq 0 ]]; then
+          whiptail --yesno "Done clearing! Return back to the dialog?" 0 0
+          if [[ $? -eq 0 ]]; then
+            manageStorageDialog
+          else
+            exit 0
+          fi
+        else
+          whiptail --msgbox "An error occured while clearing. See the log for more info."
+          exit 1
+        fi
       elif [[ "$results" = "Clear previous target files" ]]; then
         clearPrevTargetFiles $outDirectory
-        manageStorageDialog
+        if [[ $? -eq 0 ]]; then
+          whiptail --yesno "Done clearing! Return back to the dialog?" 0 0
+          if [[ $? -eq 0 ]]; then
+            manageStorageDialog
+          else
+            exit 0
+          fi
+        else
+          whiptail --msgbox "An error occured while clearing. See the log for more info."
+          exit 1
+        fi
+      elif [[ "$results" = "Quit" ]]; then
+        exit 0
       fi
     fi
   else
