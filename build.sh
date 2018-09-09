@@ -50,10 +50,10 @@ manageStorageDialog() {
       outDirectory=$(whiptail --inputbox "Enter the out directory:" 0 0 3>&1 1>&2 2>&3)
       if [[ "$results" = "Clear previous builds" ]]; then
         clearPrevBuilds $outDirectory
-        doneExec
+        manageStorageDialog
       elif [[ "$results" = "Clear previous target files" ]]; then
         clearPrevTargetFiles $outDirectory
-        doneExec
+        manageStorageDialog
       fi
     fi
   else
