@@ -48,7 +48,7 @@ manageStorageDialog() {
   results=$(whiptail --title "Manage storage" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
   if [[ $? -eq 0 ]]; then
     if [[ "$results" = "Exit and return" ]]; then
-      doneExec
+      mainMenu
     elif [[ "$results" = "Quit" ]]; then
       exit 0
     else
