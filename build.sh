@@ -55,6 +55,7 @@ manageStorageDialog() {
         clearPrevTargetFiles $outDirectory
         doneExec
       fi
+    fi
   else
     # User pressed escape or on the Cancel button
     # Exit the menu in this case
