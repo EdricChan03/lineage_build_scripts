@@ -132,32 +132,34 @@ checkFunction() {
 # Function for clearing all lineage-15.1-* files in the out directory (includes md5sum files)
 clearPrevBuilds() {
   outDir="$1"
+  outDir="${outDir/#\~/$HOME}"
   if [[ -n "$CLEAR_PREV_BUILDS" ]]; then
     if [[ "$CLEAR_PREV_BUILDS" = true ]]; then
       infoBold "Clearing previous LineageOS builds..."
       # See https://stackoverflow.com/a/26765276
-      ls -t "$outDir/lineage*" | tail -n +4 | xargs rm --
+      ls -t $outDir/lineage* | tail -n +4 | xargs rm --
     fi
   else
     infoBold "Clearing previous LineageOS builds..."
     # See https://stackoverflow.com/a/26765276
-    ls -t "$outDir/lineage*" | tail -n +4 | xargs rm --
+    ls -t $outDir/lineage* | tail -n +4 | xargs rm --
   fi
 }
 
 # Clears the previous target file which can take up 1+ GB for every build
 clearPrevTargetFiles() {
   outDir="$1"
+  outDir="${outDir/#\~/$HOME}"
   if [[ -n "$CLEAR_PREV_TARGET_FILES" ]]; then
     if [[ "$CLEAR_PREV_TARGET_FILES" = true ]]; then
       infoBold "Clearing previous target files..."
       # See https://stackoverflow.com/a/26765276
-      ls -t "$outDir/obj/PACKAGING/target_files_intermediates" | tail -n +4 | xargs rm -r --
+      ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
     fi
   else
     infoBold "Clearing previous target files..."
     # See https://stackoverflow.com/a/26765276
-    ls -t "$outDir/obj/PACKAGING/target_files_intermediates" | tail -n +4 | xargs rm -r --
+    ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
   fi
 }
 

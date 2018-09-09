@@ -39,6 +39,25 @@ fi
 # See `set --help` for more info
 # set -e
 
+# Function for saving storage
+manageStorageDialog() {
+  choices=("Clear previous builds" "Clears all previous builds" "Clear previous target files" "Clear previous target files used for OTA packages." "Exit" "Exits this dialog.")
+  results=$(whiptail --title "Manage storage" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
+  if [[ $? -eq 0 ]]; then
+    outDirectory=$(whiptail --inputbox "Enter the out directory:" 0 0 3>&1 1>&2 2>&3)
+    if [[ "$results" = "Clear previous builds" ]]; then
+      clearPrevBuilds $outDirectory
+    elif [[ "$results" = "Clear previous target files" ]]; then
+      clearPrevTargetFiles $outDirectory
+    elif [[ "$results" = "Exit" ]]; then
+      exit 0
+    fi
+  else
+    # User pressed escape or on the Cancel button
+    # Exit the menu in this case
+    exit 0
+  fi
+}
 # Function for setting the configuration of FTP
 ftpConfigDialog() {
   whiptail --yesno "Would you like to upload the builds via FTP?" 0 0
@@ -217,8 +236,8 @@ mainMenuHandler() {
     candroid
     buildDialog
     doneExec
-  elif [[ "$menuResult" = "Upload" ]]; then
-    whiptail --title "Notice" --msgbox "The upload section is coming soon! Stay tuned." 0 0
+  elif [[ "$menuResult" = "Manage storage" ]]; then
+    manageStorageDialog
   elif [[ "$menuResult" = "About" ]]; then
     whiptail --title "About" --msgbox "build.sh Version $scriptVersion" 0 0
     mainMenu
@@ -227,7 +246,7 @@ mainMenuHandler() {
 
 # Function for showing a menu when the program has been executed
 mainMenu() {
-  choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Clear previous builds" "Clear previous LineageOS builds except the newest build" "About" "Show information about this script.")
+  choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Manage storage" "Save storage!" "About" "Show information about this script.")
   results=$(whiptail --title "Utilities" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
   if [[ $? -eq 0 ]]; then
     mainMenuHandler "$results"
