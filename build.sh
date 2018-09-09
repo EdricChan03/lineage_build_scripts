@@ -7,6 +7,9 @@ trap "exit" INT
 # Source common functions
 source ./functions.sh
 
+# The version of the script
+scriptVersion="1.0.1"
+
 ftpServer=""
 ftpUsername=""
 ftpPassword=""
@@ -79,6 +82,7 @@ buildDialog() {
   if [[ $? -eq 0 ]] && [[ "$devices" ]]; then
     build $devices
     ftpConfigDialog
+    
     outdirsLength="${#outdirs[@]}"
     for (( i=1; i<${outdirsLength}+1; i++ ));
     do
@@ -215,15 +219,15 @@ mainMenuHandler() {
     doneExec
   elif [[ "$menuResult" = "Upload" ]]; then
     whiptail --title "Notice" --msgbox "The upload section is coming soon! Stay tuned." 0 0
-  elif [[ "$menuResult" = "Help" ]]; then
-    whiptail --title "Notice" --msgbox "The help guide is coming soon! Stay tuned." 0 0
+  elif [[ "$menuResult" = "About" ]]; then
+    whiptail --title "About" --msgbox "build.sh Version $scriptVersion" 0 0
     mainMenu
   fi
 }
 
 # Function for showing a menu when the program has been executed
 mainMenu() {
-  choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Help" "Show help.")
+  choices=("Exit" "Quit the script." "Sync" "Sync the Android Source." "Build" "Build for a device(s)." "Clear previous builds" "Clear previous LineageOS builds except the newest build" "About" "Show information about this script.")
   results=$(whiptail --title "Utilities" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
   if [[ $? -eq 0 ]]; then
     mainMenuHandler "$results"
