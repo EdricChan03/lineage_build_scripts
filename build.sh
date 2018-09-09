@@ -44,16 +44,17 @@ manageStorageDialog() {
   choices=("Clear previous builds" "Clears all previous builds" "Clear previous target files" "Clear previous target files used for OTA packages." "Exit" "Exits this dialog.")
   results=$(whiptail --title "Manage storage" --menu "Choose one of the options below:" 0 0 0  "${choices[@]}" 3>&1 1>&2 2>&3)
   if [[ $? -eq 0 ]]; then
-    outDirectory=$(whiptail --inputbox "Enter the out directory:" 0 0 3>&1 1>&2 2>&3)
-    if [[ "$results" = "Clear previous builds" ]]; then
-      clearPrevBuilds $outDirectory
+    if [[ "$results" = "Exit" ]]; then
       doneExec
-    elif [[ "$results" = "Clear previous target files" ]]; then
-      clearPrevTargetFiles $outDirectory
-      doneExec
-    elif [[ "$results" = "Exit" ]]; then
-      doneExec
-    fi
+    else
+      outDirectory=$(whiptail --inputbox "Enter the out directory:" 0 0 3>&1 1>&2 2>&3)
+      if [[ "$results" = "Clear previous builds" ]]; then
+        clearPrevBuilds $outDirectory
+        doneExec
+      elif [[ "$results" = "Clear previous target files" ]]; then
+        clearPrevTargetFiles $outDirectory
+        doneExec
+      fi
   else
     # User pressed escape or on the Cancel button
     # Exit the menu in this case
