@@ -268,7 +268,7 @@ mainMenuHandler() {
   elif [[ "$menuResult" = "Manage storage" ]]; then
     manageStorageDialog
   elif [[ "$menuResult" = "About" ]]; then
-    whiptail --title "About" --msgbox "build.sh Version $scriptVersion" 0 0
+    whiptail --title "About" --msgbox "build.sh: Version $scriptVersion" 0 0
     mainMenu
   fi
 }
