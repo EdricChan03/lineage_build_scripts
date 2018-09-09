@@ -140,6 +140,7 @@ clearPrevBuilds() {
       ls -t $outDir/lineage* | tail -n +4 | xargs rm --
       if [[ $? -eq 0 ]]; then
         successBold "Done clearing."
+      fi
     fi
   else
     infoBold "Clearing previous LineageOS builds..."
@@ -147,6 +148,7 @@ clearPrevBuilds() {
     ls -t $outDir/lineage* | tail -n +4 | xargs rm --
     if [[ $? -eq 0 ]]; then
       successBold "Done clearing."
+    fi
   fi
 }
 
@@ -161,6 +163,7 @@ clearPrevTargetFiles() {
       ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
       if [[ $? -eq 0 ]]; then
         successBold "Done clearing."
+      fi
     fi
   else
     infoBold "Clearing previous target files..."
@@ -168,6 +171,7 @@ clearPrevTargetFiles() {
     ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
     if [[ $? -eq 0 ]]; then
       successBold "Done clearing."
+    fi
   fi
 }
 
