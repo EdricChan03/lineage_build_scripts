@@ -49,6 +49,8 @@ manageStorageDialog() {
   if [[ $? -eq 0 ]]; then
     if [[ "$results" = "Exit and return" ]]; then
       doneExec
+    elif [[ "$results" = "Quit" ]]; then
+      exit 0
     else
       outDirectory=$(whiptail --inputbox "Enter the out directory:" 0 0 3>&1 1>&2 2>&3)
       if [[ "$results" = "Clear previous builds" ]]; then
@@ -77,8 +79,6 @@ manageStorageDialog() {
           whiptail --msgbox "An error occured while clearing. See the log for more info."
           exit 1
         fi
-      elif [[ "$results" = "Quit" ]]; then
-        exit 0
       fi
     fi
   else
