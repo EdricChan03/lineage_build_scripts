@@ -8,7 +8,7 @@ trap "exit" INT
 source ./functions.sh
 
 # The version of the script
-scriptVersion="1.0.1"
+scriptVersion="1.0.3"
 
 ftpServer=""
 ftpUsername=""
@@ -47,15 +47,17 @@ manageStorageDialog() {
     outDirectory=$(whiptail --inputbox "Enter the out directory:" 0 0 3>&1 1>&2 2>&3)
     if [[ "$results" = "Clear previous builds" ]]; then
       clearPrevBuilds $outDirectory
+      doneExec
     elif [[ "$results" = "Clear previous target files" ]]; then
       clearPrevTargetFiles $outDirectory
+      doneExec
     elif [[ "$results" = "Exit" ]]; then
-      exit 0
+      doneExec
     fi
   else
     # User pressed escape or on the Cancel button
     # Exit the menu in this case
-    exit 0
+    doneExec
   fi
 }
 # Function for setting the configuration of FTP
