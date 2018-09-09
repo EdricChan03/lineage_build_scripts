@@ -61,3 +61,5 @@ Environmental Variable | Description | Accepted values
 ---|---|---
 `DEBUG_MODE` / `SHOW_DEBUG` / `SHOW_DEBUG_MSGS` | Whether to show debug messages | `true` / `false`
 `SHOW_FILEPATH` / `SHOW_FILE_PATH` | Whether to show a file's path | `true` / `false`
+`CLEAR_PREV_BUILDS` | Whether to clear previous builds (Set as `false` to disable clearing, default: `true`) | `true` / `false`
+`CLEAR_PREV_TARGET_FILES` | Whether to clear previous target files (for OTAs) (Set as `false` to disable clearing, default: `true`) | `true` / `false`
