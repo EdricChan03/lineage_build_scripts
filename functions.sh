@@ -133,15 +133,14 @@ checkFunction() {
 clearPrevBuilds() {
   outDir="$1"
   outDir="${outDir/#\~/$HOME}"
+  infoBold "Clearing previous LineageOS builds..."
   if [[ -n "$CLEAR_PREV_BUILDS" ]]; then
     if [[ "$CLEAR_PREV_BUILDS" = true ]]; then
-      infoBold "Clearing previous LineageOS builds..."
       # See https://stackoverflow.com/a/26765276
       ls -t $outDir/lineage* | tail -n +4 | xargs rm --
       return $?
     fi
   else
-    infoBold "Clearing previous LineageOS builds..."
     # See https://stackoverflow.com/a/26765276
     ls -t $outDir/lineage* | tail -n +4 | xargs rm --
     return $?
@@ -152,15 +151,14 @@ clearPrevBuilds() {
 clearPrevTargetFiles() {
   outDir="$1"
   outDir="${outDir/#\~/$HOME}"
+  infoBold "Clearing previous target files..."
   if [[ -n "$CLEAR_PREV_TARGET_FILES" ]]; then
     if [[ "$CLEAR_PREV_TARGET_FILES" = true ]]; then
-      infoBold "Clearing previous target files..."
       # See https://stackoverflow.com/a/26765276
       ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
       return $?
     fi
   else
-    infoBold "Clearing previous target files..."
     # See https://stackoverflow.com/a/26765276
     ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
     return $?
