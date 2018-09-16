@@ -136,13 +136,21 @@ clearPrevBuilds() {
   infoBold "Clearing previous LineageOS builds..."
   if [[ -n "$CLEAR_PREV_BUILDS" ]]; then
     if [[ "$CLEAR_PREV_BUILDS" = true ]]; then
-      # See https://stackoverflow.com/a/26765276
-      ls -t $outDir/lineage* | tail -n +4 | xargs rm --
+      # See https://stackoverflow.com/a/26765276'
+      # This command should clear exactly 3 files:
+      # - The zip file
+      # - The md5sum file
+      # - And lastly, the OTA zip file
+      ls -t $outDir/lineage* | tail -n +4 | xargs rm -v --
       return $?
     fi
   else
     # See https://stackoverflow.com/a/26765276
-    ls -t $outDir/lineage* | tail -n +4 | xargs rm --
+    # This command should clear exactly 3 files:
+    # - The zip file
+    # - The md5sum file
+    # - And lastly, the OTA zip file
+    ls -t $outDir/lineage* | tail -n +4 | xargs rm -v --
     return $?
   fi
 }
@@ -155,12 +163,22 @@ clearPrevTargetFiles() {
   if [[ -n "$CLEAR_PREV_TARGET_FILES" ]]; then
     if [[ "$CLEAR_PREV_TARGET_FILES" = true ]]; then
       # See https://stackoverflow.com/a/26765276
-      ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
+      # (Note: The -d flag indicates that ls won't recursively list through directories)
+      # This command should clear exactly 4 files:
+      # - A folder
+      # - A zip file
+      # - A file of extension type `list`
+      ls -d -t $outDir/obj/PACKAGING/target_files_intermediates/lineage_*-target_files-* | tail -n +4 | xargs rm -rv --
       return $?
     fi
   else
     # See https://stackoverflow.com/a/26765276
-    ls -t $outDir/obj/PACKAGING/target_files_intermediates | tail -n +4 | xargs rm -r --
+    # (Note: The -d flag indicates that ls won't recursively list through directories)
+    # This command should clear exactly 4 files:
+    # - A folder
+    # - A zip file
+    # - A file of extension type `list`
+    ls -d -t $outDir/obj/PACKAGING/target_files_intermediates/lineage_*-target_files-* | tail -n +4 | xargs rm -rv --
     return $?
   fi
 }
@@ -212,6 +230,7 @@ buildDevices() {
           infoBold "Building for $i..."
           breakfast "$i"
           brunch "$i"
+          echo "$OUT"
           clearPrevBuilds "$OUT"
           clearPrevTargetFiles "$OUT"
           outdirs+=($OUT)
